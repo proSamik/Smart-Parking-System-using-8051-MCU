@@ -1,0 +1,426 @@
+LX51 CODE BANKING LINKER/LOCATOR V05.01.24                                     05/10/23  22:39:01
+WIN32 LX51 CODE BANKING LINKER/LOCATOR V05.01.24,  INVOKED BY:
+LX51 "c:\users\hp\downloads\mini project work\miniproject.OBJ" TO("c:\users\hp\downloads\mini pro&
+ject work\miniproject.AOF") PR("c:\users\hp\downloads\mini project work\miniproject.m51") XSIZE(6&
+5536) CSIZE(65536) RS(256) RSI(128) IX MAP 
+
+
+MEMORY MODEL: SMALL WITHOUT ANY FLOATING POINT ARITHMETIC
+
+
+INPUT MODULES INCLUDED
+  C:\USERS\HP\DOWNLOADS\MINI PROJECT WORK\MINIPROJECT.OBJ(MINIPROJECT)
+  c:\RIDE\Lib\RC51S.LIB(C1S)
+  c:\RIDE\Lib\RC51S.LIB(IPGN1)
+  c:\RIDE\Lib\RC51S.LIB(DIVS)
+  c:\RIDE\Lib\RC51S.LIB(HPD)
+  c:\RIDE\Lib\RC51S.LIB(_C_INITD)
+  c:\RIDE\Lib\RC51S.LIB(_C_IDATALEN)
+
+
+LINK MAP OF MODULE: C:\USERS\HP\DOWNLOADS\MINI PROJECT WORK\MINIPROJECT.AOF (MINIPROJECT)
+
+    TYPE     BASE       LENGTH    RELOCATION     SEGMENT NAME
+    ----     ----       ------    ----------     ------------
+
+    * * * * * * *   DATA/IDATA    M E M O R Y   * * * * * * *
+    REG      0000H      0008H     ABSOLUTE       "REG BANK 0"
+    DATA     0008H      000CH     UNIT           ?DT?MINIPROJECT
+    DATA     0014H      0003H     OVERLAID UNIT  _DGROUP00_
+             0014H      0003H     -------------  ?DT?_show?MINIPROJECT
+    IDATA    0017H      0001H     * * STACK * *  _STACK
+
+    * * * * * * *   CODE          M E M O R Y   * * * * * * *
+    CODE     0000H      0003H     ABSOLUTE       
+    CODE     0003H      002BH     INBLOCK        ?PR?MOVES?LIB51
+    CODE     002EH      00BDH     UNIT           ?PR?LIB51
+    CODE     00EBH      0066H     UNIT           ?PR?C51_STARTUP?
+    CODE     0151H      001AH     UNIT           ?PR?lcd_init?MINIPROJECT
+    CODE     016BH      000EH     UNIT           ?PR?_cmd?MINIPROJECT
+    CODE     0179H      000EH     UNIT           ?PR?_dat?MINIPROJECT
+    CODE     0187H      0023H     UNIT           ?PR?_show?MINIPROJECT
+    CODE     01AAH      0009H     UNIT           ?PR?lcd_delay?MINIPROJECT
+    CODE     01B3H      0015H     UNIT           ?PR?send_pulse1?MINIPROJECT
+    CODE     01C8H      0015H     UNIT           ?PR?send_pulse2?MINIPROJECT
+    CODE     01DDH      003AH     UNIT           ?PR?ultrasonic1?MINIPROJECT
+    CODE     0217H      003AH     UNIT           ?PR?ultrasonic2?MINIPROJECT
+    CODE     0251H      001BH     UNIT           ?PR?delay?MINIPROJECT
+    CODE     026CH      001BH     UNIT           ?PR?delayfew?MINIPROJECT
+    CODE     0287H      00B0H     UNIT           ?STR?MINIPROJECT
+    CODE     0337H      02B4H     UNIT           ?PR?main?MINIPROJECT
+    CODE     05EBH      0009H     UNIT           _C_INITD?CD
+
+EXECUTABLE SUMMARY:
+-------------------
+    Total INTERNAL RAM storage requirement:  0017H (23)
+    Total EXTERNAL RAM storage requirement:  0000H (0)
+    Total     CODE     storage requirement:  05F4H (1524)
+Note:  Summary does not include dynamic stack requirements
+
+
+REFERENCE MAP OF MODULE: C:\USERS\HP\DOWNLOADS\MINI PROJECT WORK\MINIPROJECT.AOF (MINIPROJECT)
+
+SEGMENT                           BI_GROUP            DT_GROUP             ID_GROUP             XD_GROUP
+  +--> CALLED SEGMENT          START    LENGTH     START    LENGTH     START    LENGTH     START    LENGTH
+--------------------------------------------------------------------------------------
+
+?PR?main?MINIPROJECT           ---------------     ---------------     ---------------     ---------------
+  +--> ?PR?lcd_init?MINIPROJECT
+  +--> ?PR?_show?MINIPROJECT
+  +--> ?PR?delay?MINIPROJECT
+  +--> ?PR?ultrasonic1?MINIPROJECT
+  +--> ?PR?ultrasonic2?MINIPROJECT
+  +--> ?PR?delayfew?MINIPROJECT
+  +--> ?PR?_cmd?MINIPROJECT
+  +--> ?PR?_dat?MINIPROJECT
+
+?PR?lcd_init?MINIPROJECT       ---------------     ---------------     ---------------     ---------------
+  +--> ?PR?_cmd?MINIPROJECT
+
+?PR?_cmd?MINIPROJECT           ---------------     ---------------     ---------------     ---------------
+  +--> ?PR?lcd_delay?MINIPROJECT
+
+?PR?lcd_delay?MINIPROJECT      ---------------     ---------------     ---------------     ---------------
+
+?PR?_show?MINIPROJECT          ---------------     0014H    0003H     ---------------     ---------------
+  +--> ?PR?_dat?MINIPROJECT
+
+?PR?_dat?MINIPROJECT           ---------------     ---------------     ---------------     ---------------
+  +--> ?PR?lcd_delay?MINIPROJECT
+
+?PR?delay?MINIPROJECT          ---------------     ---------------     ---------------     ---------------
+
+?PR?ultrasonic1?MINIPROJECT    ---------------     ---------------     ---------------     ---------------
+  +--> ?PR?send_pulse1?MINIPROJECT
+
+?PR?send_pulse1?MINIPROJECT    ---------------     ---------------     ---------------     ---------------
+
+?PR?ultrasonic2?MINIPROJECT    ---------------     ---------------     ---------------     ---------------
+  +--> ?PR?send_pulse2?MINIPROJECT
+
+?PR?send_pulse2?MINIPROJECT    ---------------     ---------------     ---------------     ---------------
+
+?PR?delayfew?MINIPROJECT       ---------------     ---------------     ---------------     ---------------
+
+SYMBOL TABLE FOR C:\USERS\HP\DOWNLOADS\MINI PROJECT WORK\MINIPROJECT.AOF(MINIPROJECT)
+--------------------------------------------------------------------------------------
+
+    VALUE              TYPE               NAME
+    -----              ----               ----
+
+	-------            MODULE             miniproject
+	C:0000H            SYMBOL             _ICE_DUMMY_
+	C:0337H            PUBLIC             main
+	C:026CH            PUBLIC             delayfew
+	C:0251H            PUBLIC             delay
+	C:0217H            PUBLIC             ultrasonic2
+	C:01DDH            PUBLIC             ultrasonic1
+	C:01C8H            PUBLIC             send_pulse2
+	C:01B3H            PUBLIC             send_pulse1
+	C:01AAH            PUBLIC             lcd_delay
+	C:0187H            PUBLIC             _show
+	C:0179H            PUBLIC             _dat
+	C:016BH            PUBLIC             _cmd
+	C:0151H            PUBLIC             lcd_init
+	B:0090H            SYMBOL             en
+	B:0091H            SYMBOL             rw
+	B:0092H            SYMBOL             rs
+	D:0012H            PUBLIC             count
+	D:0010H            PUBLIC             vacancies
+	D:000EH            PUBLIC             widthofvehicle
+	D:000CH            PUBLIC             widthofgate
+	D:000AH            PUBLIC             range2
+	D:0008H            PUBLIC             range1
+	B:0097H            SYMBOL             IR
+	B:0096H            SYMBOL             echo2
+	B:0095H            SYMBOL             trig2
+	B:0094H            SYMBOL             echo1
+	B:0093H            SYMBOL             trig1
+	D:0082H            SYMBOL             DPTR
+	D:0081H            SYMBOL             __SP__
+	B:0098H            SYMBOL             RI
+	B:0099H            SYMBOL             TI
+	B:009AH            SYMBOL             RB8
+	B:009BH            SYMBOL             TB8
+	B:009CH            SYMBOL             REN
+	B:009DH            SYMBOL             SM2
+	B:009EH            SYMBOL             SM1
+	B:009FH            SYMBOL             SM0
+	B:00B0H            SYMBOL             RXD
+	B:00B1H            SYMBOL             TXD
+	B:00B2H            SYMBOL             INT0
+	B:00B3H            SYMBOL             INT1
+	B:00B4H            SYMBOL             T0
+	B:00B5H            SYMBOL             T1
+	B:00B6H            SYMBOL             WR
+	B:00B7H            SYMBOL             RD
+	B:00B8H            SYMBOL             PX0
+	B:00B9H            SYMBOL             PT0
+	B:00BAH            SYMBOL             PX1
+	B:00BBH            SYMBOL             PT1
+	B:00BCH            SYMBOL             PS
+	B:00A8H            SYMBOL             EX0
+	B:00A9H            SYMBOL             ET0
+	B:00AAH            SYMBOL             EX1
+	B:00ABH            SYMBOL             ET1
+	B:00ACH            SYMBOL             ES
+	B:00AFH            SYMBOL             EA
+	B:0088H            SYMBOL             IT0
+	B:0089H            SYMBOL             IE0
+	B:008AH            SYMBOL             IT1
+	B:008BH            SYMBOL             IE1
+	B:008CH            SYMBOL             TR0
+	B:008DH            SYMBOL             TF0
+	B:008EH            SYMBOL             TR1
+	B:008FH            SYMBOL             TF1
+	B:00D0H            SYMBOL             P
+	B:00D2H            SYMBOL             OV
+	B:00D3H            SYMBOL             RS0
+	B:00D4H            SYMBOL             RS1
+	B:00D5H            SYMBOL             F0
+	B:00D6H            SYMBOL             AC
+	B:00D7H            SYMBOL             CY
+	D:0099H            SYMBOL             SBUF
+	D:0098H            SYMBOL             SCON
+	D:00B8H            SYMBOL             IP
+	D:00A8H            SYMBOL             IE
+	D:008DH            SYMBOL             TH1
+	D:008CH            SYMBOL             TH0
+	D:008BH            SYMBOL             TL1
+	D:008AH            SYMBOL             TL0
+	D:0089H            SYMBOL             TMOD
+	D:0088H            SYMBOL             TCON
+	D:0087H            SYMBOL             PCON
+	D:0083H            SYMBOL             DPH
+	D:0082H            SYMBOL             DPL
+	D:0081H            SYMBOL             SP
+	D:00F0H            SYMBOL             B
+	D:00E0H            SYMBOL             ACC
+	D:00D0H            SYMBOL             PSW
+	D:00B0H            SYMBOL             P3
+	D:00A0H            SYMBOL             P2
+	D:0090H            SYMBOL             P1
+	D:0080H            SYMBOL             P0
+	-------            PROC               lcd_init
+	C:0151H            LINE#              37
+	C:0151H            LINE#              37
+	C:0151H            LINE#              39
+	C:0156H            LINE#              40
+	C:015BH            LINE#              41
+	C:0160H            LINE#              42
+	C:0165H            LINE#              43
+	C:016AH            LINE#              44
+	C:016AH            LINE#              44
+	-------            ENDPROC            lcd_init
+	-------            PROC               _cmd
+	C:016BH            LINE#              46
+	C:016BH            LINE#              46
+	C:016BH            LINE#              48
+	C:016DH            LINE#              49
+	C:016FH            LINE#              50
+	C:0171H            LINE#              51
+	C:0173H            LINE#              52
+	C:0176H            LINE#              53
+	C:0178H            LINE#              54
+	C:0178H            LINE#              54
+	-------            ENDPROC            _cmd
+	-------            PROC               _dat
+	C:0179H            LINE#              56
+	C:0179H            LINE#              56
+	C:0179H            LINE#              58
+	C:017BH            LINE#              59
+	C:017DH            LINE#              60
+	C:017FH            LINE#              61
+	C:0181H            LINE#              62
+	C:0184H            LINE#              63
+	C:0186H            LINE#              64
+	C:0186H            LINE#              64
+	-------            ENDPROC            _dat
+	-------            PROC               _show
+	D:0014H            SYMBOL             s
+	C:0187H            LINE#              66
+	C:0187H            LINE#              66
+	C:018DH            LINE#              68
+	C:0198H            LINE#              69
+	C:01A9H            LINE#              71
+	C:01A9H            LINE#              71
+	-------            ENDPROC            _show
+	-------            PROC               lcd_delay
+	C:01AAH            LINE#              73
+	C:01AAH            LINE#              73
+	C:01AAH            LINE#              76
+	C:01B2H            LINE#              77
+	C:01B2H            LINE#              77
+	-------            ENDPROC            lcd_delay
+	-------            PROC               send_pulse1
+	C:01B3H            LINE#              80
+	C:01B3H            LINE#              80
+	C:01B3H            LINE#              82
+	C:01B9H            LINE#              83
+	C:01BBH            LINE#              84
+	C:01C0H            LINE#              85
+	C:01C5H            LINE#              86
+	C:01C7H            LINE#              87
+	C:01C7H            LINE#              87
+	-------            ENDPROC            send_pulse1
+	-------            PROC               send_pulse2
+	C:01C8H            LINE#              89
+	C:01C8H            LINE#              89
+	C:01C8H            LINE#              91
+	C:01CEH            LINE#              92
+	C:01D0H            LINE#              93
+	C:01D5H            LINE#              94
+	C:01DAH            LINE#              95
+	C:01DCH            LINE#              96
+	C:01DCH            LINE#              96
+	-------            ENDPROC            send_pulse2
+	-------            PROC               ultrasonic1
+	C:01DDH            LINE#              98
+	C:01DDH            LINE#              98
+	C:01DDH            LINE#              101
+	C:01E0H            LINE#              103
+	C:01E3H            LINE#              104
+	C:01E8H            LINE#              106
+	C:01EBH            LINE#              107
+	C:01EEH            LINE#              108
+	C:01F1H            LINE#              109
+	C:01F7H            LINE#              110
+	C:0203H            LINE#              111
+	C:0212H            LINE#              113
+	C:0214H            LINE#              114
+	C:0216H            LINE#              115
+	C:0216H            LINE#              115
+	-------            ENDPROC            ultrasonic1
+	-------            PROC               ultrasonic2
+	C:0217H            LINE#              117
+	C:0217H            LINE#              117
+	C:0217H            LINE#              120
+	C:021AH            LINE#              122
+	C:021DH            LINE#              123
+	C:0222H            LINE#              125
+	C:0225H            LINE#              126
+	C:0228H            LINE#              127
+	C:022BH            LINE#              128
+	C:0231H            LINE#              129
+	C:023DH            LINE#              130
+	C:024CH            LINE#              132
+	C:024EH            LINE#              133
+	C:0250H            LINE#              134
+	C:0250H            LINE#              134
+	-------            ENDPROC            ultrasonic2
+	-------            PROC               delay
+	C:0251H            LINE#              135
+	C:0251H            LINE#              135
+	C:0251H            LINE#              137
+	C:0254H            LINE#              138
+	C:0260H            LINE#              137
+	C:026BH            LINE#              140
+	C:026BH            LINE#              140
+	-------            ENDPROC            delay
+	-------            PROC               delayfew
+	C:026CH            LINE#              142
+	C:026CH            LINE#              142
+	C:026CH            LINE#              144
+	C:026FH            LINE#              145
+	C:027BH            LINE#              144
+	C:0286H            LINE#              147
+	C:0286H            LINE#              147
+	-------            ENDPROC            delayfew
+	-------            PROC               main
+	C:0337H            LINE#              149
+	C:0337H            LINE#              149
+	C:0337H            LINE#              152
+	C:033AH            LINE#              153
+	C:0340H            LINE#              154
+	C:0342H            LINE#              155
+	C:0345H            LINE#              156
+	C:0347H            LINE#              158
+	C:034DH            LINE#              159
+	C:0352H            LINE#              160
+	C:035BH            LINE#              163
+	C:0364H            LINE#              164
+	C:0369H            LINE#              165
+	C:036EH            LINE#              166
+	C:0377H            LINE#              167
+	C:037AH            LINE#              168
+	C:037FH            LINE#              169
+	C:0384H            LINE#              170
+	C:038DH            LINE#              171
+	C:0392H            LINE#              172
+	C:039BH            LINE#              173
+	C:03A1H            LINE#              174
+	C:03A8H            LINE#              177
+	C:03B0H            LINE#              178
+	C:03B8H            LINE#              179
+	C:03CEH            LINE#              180
+	C:03D3H            LINE#              181
+	C:03E5H            LINE#              182
+	C:03FEH            LINE#              183
+	C:0410H            LINE#              185
+	C:042DH            LINE#              186
+	C:0432H            LINE#              187
+	C:0437H            LINE#              188
+	C:0440H            LINE#              189
+	C:0445H            LINE#              190
+	C:044EH            LINE#              191
+	C:0451H            LINE#              193
+	C:0474H            LINE#              194
+	C:0481H            LINE#              195
+	C:0486H            LINE#              196
+	C:048BH            LINE#              197
+	C:0494H            LINE#              198
+	C:0499H            LINE#              199
+	C:04A2H            LINE#              200
+	C:04A7H            LINE#              201
+	C:04B9H            LINE#              202
+	C:04D2H            LINE#              203
+	C:04E4H            LINE#              204
+	C:04E7H            LINE#              206
+	C:04ECH            LINE#              207
+	C:04F1H            LINE#              208
+	C:04FAH            LINE#              209
+	C:04FFH            LINE#              210
+	C:0507H            LINE#              211
+	C:050AH            LINE#              212
+	C:050FH            LINE#              213
+	C:0517H            LINE#              217
+	C:054BH            LINE#              218
+	C:0557H            LINE#              219
+	C:055CH            LINE#              220
+	C:0561H            LINE#              221
+	C:056AH            LINE#              222
+	C:056FH            LINE#              223
+	C:0578H            LINE#              224
+	C:057BH            LINE#              225
+	C:0580H            LINE#              226
+	C:0585H            LINE#              227
+	C:058EH            LINE#              228
+	C:0593H            LINE#              229
+	C:059BH            LINE#              230
+	C:059EH            LINE#              231
+	C:05A6H            LINE#              234
+	C:05BAH            LINE#              235
+	C:05BFH            LINE#              236
+	C:05C4H            LINE#              237
+	C:05CDH            LINE#              238
+	C:05D2H            LINE#              239
+	C:05DBH            LINE#              240
+	C:05E0H            LINE#              241
+	C:05E3H            LINE#              242
+	C:05E8H            LINE#              245
+	-------            ENDPROC            main
+	-------            ENDMOD             miniproject
+	C:00EBH            PUBLIC             ?C_START1
+	C:0003H            PUBLIC             IPGN1?C
+	C:002EH            PUBLIC             ?C_SIDIV
+	C:0056H            PUBLIC             ?C_UIDIV
+	C:00DBH            PUBLIC             CPL_R4R5
+	C:00E3H            PUBLIC             CPL_R6R7
+	C:008EH            PUBLIC             DIV_2
+	D:00A0H            PUBLIC             HPD_ADDR
+	C:05EBH            PUBLIC             ?C_INITSEGSTART
+	N:007FH            PUBLIC             IDATALEN
+	N:00FFH            PUBLIC             _INITP2?
+
+LINK/LOCATE RUN COMPLETE,  NO ERROR FOUND.
+

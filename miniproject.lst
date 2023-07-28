@@ -1,0 +1,1036 @@
+RC51 COMPILER V03.03.37,  MINIPROJECT             05/10/23  22:39:01  PAGE  1
+
+QCW(0x00002F32)
+
+WIN32 RC51 COMPILER V03.03.37, COMPILATION OF MODULE MINIPROJECT
+OBJECT MODULE PLACED IN c:\users\hp\downloads\mini project work\miniproject.obj
+
+            -COMPILER INVOKED BY: RC51.EXE C:\USERS\HP\DOWNLOADS\MINI PROJECT WO
+            -RK\MINIPROJECT.C OBJECT(C:\USERS\HP\DOWNLOADS\MINI PROJECT WORK\MIN
+            -IPROJECT.OBJ) PIN(C:\RIDE\INC;C:\RIDE\INC\51) PIN(C:\RIDE\INC\51\) 
+            -NOAM PR(C:\USERS\HP\DOWNLOADS\MINI PROJECT WORK\MINIPROJECT.LST) CD
+            - SB OE(1) SM FP(NOFLOAT) PW(80) NOIS UNSIGNEDCHAR ET(CHAR) 
+
+stmt level    source
+   1          #include<intrins.h>
+   2          #include<reg51.h>
+   3          #include <stdio.h>
+   4          #include <math.h>
+   5          
+   6          #define lcd_data P2
+   7          
+   8          sfr16 DPTR=0x82;
+   9          
+  10          sbit trig1=P1^3;
+  11          sbit echo1=P1^4;
+  12          
+  13          sbit trig2=P1^5;
+  14          sbit echo2=P1^6;
+  15          
+  16          // infrared module ------------------
+  17          sbit IR=P1^7;
+  18          
+  19          unsigned int range1=0;
+  20          unsigned int range2=0;
+  21          int widthofgate = 488;    //distance between the gate
+  22          int widthofvehicle=0;
+  23          
+  24          int vacancies = 2;
+  25          int count=0;
+  26          
+  27          sbit rs=P1^2;
+  28          sbit rw=P1^1;
+  29          sbit en=P1^0;
+  30          
+  31          void lcd_init();
+  32          void cmd(unsigned char a);
+  33          void dat(unsigned char b);
+  34          void show(unsigned char *s);
+  35          void lcd_delay();
+  36          
+  37          void lcd_init()
+  38          {
+  39   1        cmd(0x38);
+  40   1        cmd(0x0e);
+  41   1        cmd(0x06);
+  42   1        cmd(0x0c);
+  43   1        cmd(0x80);
+  44   1      }
+  45          
+  46          void cmd(unsigned char a)
+  47          {
+  48   1        lcd_data=a;
+  49   1        rs=0;
+  50   1        rw=0;
+  51   1        en=1;
+  52   1        lcd_delay();
+  53   1        en=0;
+  54   1      }
+  55          
+  56          void dat(unsigned char b)
+  57          {
+  58   1        lcd_data=b;
+  59   1        rs=1;
+  60   1        rw=0;
+  61   1        en=1;
+  62   1        lcd_delay();
+  63   1        en=0;
+  64   1      }
+  65          
+  66          void show(unsigned char *s)
+  67          {
+  68   1        while(*s) {
+  69   2          dat(*s++);
+  70   2        }
+  71   1      }
+  72          
+  73          void lcd_delay()
+  74          {
+  75   1        unsigned int i;
+  76   1        for(i=0;i<=1000;i++);
+  77   1      }
+  78          
+  79          
+  80          void send_pulse1(void) 
+  81          {
+  82   1        TH0=0x00;TL0=0x00; 
+  83   1         trig1=1;
+  84   1         _nop_();_nop_();_nop_();_nop_();_nop_();
+  85   1         _nop_();_nop_();_nop_();_nop_();_nop_();
+  86   1         trig1=0;
+  87   1      }
+  88          
+  89          void send_pulse2(void) 
+  90          {
+  91   1        TH0=0x00;TL0=0x00; 
+  92   1         trig2=1;
+  93   1         _nop_();_nop_();_nop_();_nop_();_nop_();
+  94   1         _nop_();_nop_();_nop_();_nop_();_nop_();
+  95   1         trig2=0;
+  96   1      }
+  97          
+  98          unsigned char ultrasonic1()
+  99          {
+ 100   1        unsigned char get;
+ 101   1        send_pulse1();
+ 102   1      
+ 103   1        while(!echo1){
+ 104   2        send_pulse1();
+ 105   2        }
+ 106   1        while(echo1);
+ 107   1        DPH=TH0;
+ 108   1        DPL=TL0;
+ 109   1        TH0=TL0=0xff;
+ 110   1        if(DPTR<30000)
+ 111   1          get=DPTR/59;
+ 112   1        else
+ 113   1          get=0;
+ 114   1        return get;
+ 115   1      }
+ 116          
+ 117          unsigned char ultrasonic2()
+ 118          {
+ 119   1        unsigned char get;
+ 120   1        send_pulse2();
+ 121   1      
+ 122   1        while(!echo2){
+ 123   2        send_pulse2();
+ 124   2        }
+ 125   1        while(echo2);
+ 126   1        DPH=TH0;
+ 127   1        DPL=TL0;
+ 128   1        TH0=TL0=0xff;
+ 129   1        if(DPTR<30000)
+ 130   1          get=DPTR/59;
+ 131   1        else
+ 132   1          get=0;
+ 133   1        return get;
+ 134   1      }
+ 135          void delay(){
+ 136   1      	unsigned int i,j;
+ 137   1      	for(i=0;i<1000;i++){
+ 138   2      		for(j=0;j<1000;j++);
+ 139   2      		}
+ 140   1      }
+ 141          
+ 142          void delayfew(){
+ 143   1      	unsigned int i,j;
+ 144   1      	for(i=0;i<500;i++){
+ 145   2      		for(j=0;j<1000;j++);
+ 146   2      		}
+ 147   1      }
+ 148          
+ 149          void main()
+ 150          {
+ 151   1      	//ultrasonic 1
+ 152   1        TMOD=0x09;
+ 153   1        TH0=TL0=0;
+ 154   1        TR0=1;
+ 155   1        lcd_init();
+ 156   1        P3|=(1<<2);
+ 157   1        while(1) {
+ 158   2        if(count==0){
+ 159   3        	 cmd(0x80);
+ 160   3        	 show("THE PARKING LOT");
+ 161   3        	 }																			
+ 162   2      	//IR Sensor detection
+ 163   2      		if(IR==0 && count==0) {
+ 164   3      			cmd(0x01);  /* clears the lcd display */
+ 165   3      			cmd(0x80);
+ 166   3      			show("WELCOME TO LOT");
+ 167   3      			delay();
+ 168   3      			cmd(0x01);  /* clears the lcd display */
+ 169   3      		    cmd(0x80);
+ 170   3      		    show("Checking Space");
+ 171   3      		    cmd(0xc0);
+ 172   3      		    show("Please Wait...");
+ 173   3      		    count=1;
+ 174   3      		    delay(2000);
+
+WARNING C183 IN LINE 174 OF miniproject.c : 'delay': function definition requir
+            -es ANSI style parameter list
+ 175   3      		}
+ 176   2      		
+ 177   2      		range1=ultrasonic1();
+ 178   2            range2=ultrasonic2();
+ 179   2            widthofvehicle = widthofgate - (range1 + range2);
+ 180   2            cmd(0xc0);
+ 181   2            dat((widthofvehicle/100)+48);
+ 182   2            dat(((widthofvehicle/10)%10)+48);
+ 183   2            dat((widthofvehicle%10)+48);
+ 184   2      		
+ 185   2      		if (count==1 && vacancies>0) {
+ 186   3      			cmd(0x01);  /* clears the lcd display */
+ 187   3      			cmd(0x80);
+ 188   3      			show("VACANCY AVAILABLE");
+ 189   3      			cmd(0xc0);
+ 190   3          		show("PLEASE PROCEED");
+ 191   3          		delayfew();	
+ 192   3          		
+ 193   3          		if(widthofvehicle<300 && widthofvehicle>100) {
+ 194   4      		    	vacancies-=1;
+ 195   4      		    	cmd(0x01);  /* clears the lcd display */
+ 196   4      	        	cmd(0x80);
+ 197   4      				show("VEHICLE ENTERED");
+ 198   4      				cmd(0xc0);
+ 199   4      				show("Width: ");
+ 200   4      				cmd(0xc7);
+ 201   4      				dat((widthofvehicle/100)+48);
+ 202   4          			dat(((widthofvehicle/10)%10)+48);
+ 203   4          			dat((widthofvehicle%10)+48);	
+ 204   4      				delay();
+ 205   4      				
+ 206   4      				cmd(0x01);  /* clears the lcd display */
+ 207   4      				cmd(0x80);
+ 208   4      				show("VACANCIES = ");
+ 209   4      				cmd(0x8d);
+ 210   4      				dat(vacancies+48);
+ 211   4      				delay();
+ 212   4      				count=0;
+ 213   4      				cmd(0x01);
+ 214   4      			}
+ 215   3          	}
+ 216   2          		
+ 217   2          	else if(count==0 && widthofvehicle<300 && widthofvehicle>100 
+            -&& vacancies<2) {
+ 218   3      	      vacancies+=1;
+ 219   3      	      cmd(0x01);  /* clears the lcd display */
+ 220   3      	      cmd(0x80);
+ 221   3      			show("Thankyou, Visit");
+ 222   3      			cmd(0xc0);
+ 223   3      			show("Again");
+ 224   3      			delay();
+ 225   3      	      cmd(0x01);  /* clears the lcd display */
+ 226   3      	      cmd(0x80);
+ 227   3      			show("VACANCIES = ");
+ 228   3      	      cmd(0x8d);
+ 229   3      			dat(vacancies+48);
+ 230   3      			delay();
+ 231   3      			cmd(0x01);
+ 232   3      		}
+ 233   2      	  
+ 234   2      		else if(count==1 && vacancies==0) {
+ 235   3      		   cmd(0x01);  /* clears the lcd display */
+ 236   3      	      cmd(0x80);
+ 237   3      			show("SORRY, NO MORE");
+ 238   3      			cmd(0xc0);
+ 239   3      			show("VACANCY");
+ 240   3      		   count=0;
+ 241   3      		   delay();
+ 242   3      		   cmd(0x01);
+ 243   3      	  	}	
+ 244   2        }
+ 245   1      }  
+ 246          
+RC51 COMPILER V03.03.37,  MINIPROJECT             05/10/23  22:39:01  PAGE  2
+
+ASSEMBLY LISTING OF GENERATED OBJECT CODE
+
+            ; FUNCTION lcd_init (BEGIN)
+                                           ; SOURCE LINE # 39 
+0000 7F38           MOV    R7,#038H
+0002 120000  R      LCALL  _cmd
+                                           ; SOURCE LINE # 40 
+0005 7F0E           MOV    R7,#00EH
+0007 120000  R      LCALL  _cmd
+                                           ; SOURCE LINE # 41 
+000A 7F06           MOV    R7,#006H
+000C 120000  R      LCALL  _cmd
+                                           ; SOURCE LINE # 42 
+000F 7F0C           MOV    R7,#00CH
+0011 120000  R      LCALL  _cmd
+                                           ; SOURCE LINE # 43 
+0014 7F80           MOV    R7,#080H
+0016 120000  R      LCALL  _cmd
+                                           ; SOURCE LINE # 44 
+0019 22             RET    
+
+            ; FUNCTION lcd_init (END)
+
+            ; FUNCTION _cmd (BEGIN)
+              ; Register R7 is assigned to parameter a
+                                           ; SOURCE LINE # 48 
+0000 8FA0           MOV    P2,R7
+                                           ; SOURCE LINE # 49 
+0002 C292           CLR    rs
+                                           ; SOURCE LINE # 50 
+0004 C291           CLR    rw
+                                           ; SOURCE LINE # 51 
+0006 D290           SETB   en
+                                           ; SOURCE LINE # 52 
+0008 120000  R      LCALL  lcd_delay
+                                           ; SOURCE LINE # 53 
+000B C290           CLR    en
+                                           ; SOURCE LINE # 54 
+000D 22             RET    
+
+            ; FUNCTION _cmd (END)
+
+            ; FUNCTION _dat (BEGIN)
+              ; Register R7 is assigned to parameter b
+                                           ; SOURCE LINE # 58 
+0000 8FA0           MOV    P2,R7
+                                           ; SOURCE LINE # 59 
+0002 D292           SETB   rs
+                                           ; SOURCE LINE # 60 
+0004 C291           CLR    rw
+                                           ; SOURCE LINE # 61 
+0006 D290           SETB   en
+                                           ; SOURCE LINE # 62 
+0008 120000  R      LCALL  lcd_delay
+                                           ; SOURCE LINE # 63 
+000B C290           CLR    en
+                                           ; SOURCE LINE # 64 
+000D 22             RET    
+
+            ; FUNCTION _dat (END)
+
+            ; FUNCTION _show (BEGIN)
+                                           ; SOURCE LINE # 66 
+0000 8B00    R      MOV    s,R3
+0002 8A00    R      MOV    s+01H,R2
+0004 8900    R      MOV    s+02H,R1
+0006         ?WHILE1:
+                                           ; SOURCE LINE # 68 
+0006 AB00    R      MOV    R3,s
+0008 AA00    R      MOV    R2,s+01H
+000A A900    R      MOV    R1,s+02H
+000C 120000  R      LCALL  IPGN1?C
+000F 6011           JZ     ?NXT1
+                                           ; SOURCE LINE # 69 
+0011 0500    R      INC    s+02H
+0013 E500    R      MOV    A,s+02H
+0015 7002           JNZ    ?LAB8
+0017 0500    R      INC    s+01H
+0019         ?LAB8:
+0019 120000  R      LCALL  IPGN1?C
+001C FF             MOV    R7,A
+001D 120000  R      LCALL  _dat
+0020 80E4           SJMP   ?WHILE1
+0022         ?NXT1:
+                                           ; SOURCE LINE # 71 
+0022 22             RET    
+
+            ; FUNCTION _show (END)
+
+            ; FUNCTION lcd_delay (BEGIN)
+              ; R4R5 is assigned to i
+                                           ; SOURCE LINE # 76 
+0000 7BE9           MOV    R3,#0E9H
+0002 7A04           MOV    R2,#004H
+0004         ?NXT5:
+0004 DBFE           DJNZ   R3,?NXT5
+0006 DAFC           DJNZ   R2,?NXT5
+                                           ; SOURCE LINE # 77 
+0008 22             RET    
+
+            ; FUNCTION lcd_delay (END)
+
+            ; FUNCTION send_pulse1 (BEGIN)
+                                           ; SOURCE LINE # 82 
+0000 758C00         MOV    TH0,#000H
+0003 758A00         MOV    TL0,#000H
+                                           ; SOURCE LINE # 83 
+0006 D293           SETB   trig1
+                                           ; SOURCE LINE # 84 
+0008 00             NOP    
+0009 00             NOP    
+000A 00             NOP    
+000B 00             NOP    
+000C 00             NOP    
+                                           ; SOURCE LINE # 85 
+000D 00             NOP    
+000E 00             NOP    
+000F 00             NOP    
+0010 00             NOP    
+0011 00             NOP    
+                                           ; SOURCE LINE # 86 
+0012 C293           CLR    trig1
+                                           ; SOURCE LINE # 87 
+0014 22             RET    
+
+            ; FUNCTION send_pulse1 (END)
+
+            ; FUNCTION send_pulse2 (BEGIN)
+                                           ; SOURCE LINE # 91 
+0000 758C00         MOV    TH0,#000H
+0003 758A00         MOV    TL0,#000H
+                                           ; SOURCE LINE # 92 
+0006 D295           SETB   trig2
+                                           ; SOURCE LINE # 93 
+0008 00             NOP    
+0009 00             NOP    
+000A 00             NOP    
+000B 00             NOP    
+000C 00             NOP    
+                                           ; SOURCE LINE # 94 
+000D 00             NOP    
+000E 00             NOP    
+000F 00             NOP    
+0010 00             NOP    
+0011 00             NOP    
+                                           ; SOURCE LINE # 95 
+0012 C295           CLR    trig2
+                                           ; SOURCE LINE # 96 
+0014 22             RET    
+
+            ; FUNCTION send_pulse2 (END)
+
+            ; FUNCTION ultrasonic1 (BEGIN)
+                                           ; SOURCE LINE # 101 
+0000 120000  R      LCALL  send_pulse1
+0003         ?WHILE4:
+                                           ; SOURCE LINE # 103 
+0003 209405         JB     echo1,?WHILE5
+                                           ; SOURCE LINE # 104 
+0006 120000  R      LCALL  send_pulse1
+0009 80F8           SJMP   ?WHILE4
+000B         ?WHILE5:
+                                           ; SOURCE LINE # 106 
+000B 2094FD         JB     echo1,?WHILE5
+                                           ; SOURCE LINE # 107 
+000E 858C83         MOV    DPH,TH0
+                                           ; SOURCE LINE # 108 
+0011 858A82         MOV    DPL,TL0
+                                           ; SOURCE LINE # 109 
+0014 758AFF         MOV    TL0,#0FFH
+0017 758CFF         MOV    TH0,#0FFH
+              ; R2 is assigned to get
+                                           ; SOURCE LINE # 110 
+001A E583           MOV    A,DPTR+01H
+001C B47505         CJNE   A,#075H,?LAB19
+001F E582           MOV    A,DPTR
+0021 B43000         CJNE   A,#030H,?LAB19
+0024         ?LAB19:
+0024 500F           JNC    ?ELSE1
+                                           ; SOURCE LINE # 111 
+0026 AE83           MOV    R6,DPTR+01H
+0028 AF82           MOV    R7,DPTR
+002A E4             CLR    A
+002B FC             MOV    R4,A
+002C 7D3B           MOV    R5,#03BH
+002E 120000  R      LCALL  ?C_UIDIV
+0031 8F02           MOV    AR2,R7
+0033 8002           SJMP   ?NXT11
+0035         ?ELSE1:
+                                           ; SOURCE LINE # 113 
+0035 E4             CLR    A
+0036 FA             MOV    R2,A
+0037         ?NXT11:
+                                           ; SOURCE LINE # 114 
+0037 8A07           MOV    AR7,R2
+                                           ; SOURCE LINE # 115 
+0039 22             RET    
+
+            ; FUNCTION ultrasonic1 (END)
+
+            ; FUNCTION ultrasonic2 (BEGIN)
+                                           ; SOURCE LINE # 120 
+0000 120000  R      LCALL  send_pulse2
+0003         ?WHILE8:
+                                           ; SOURCE LINE # 122 
+0003 209605         JB     echo2,?WHILE9
+                                           ; SOURCE LINE # 123 
+0006 120000  R      LCALL  send_pulse2
+0009 80F8           SJMP   ?WHILE8
+000B         ?WHILE9:
+                                           ; SOURCE LINE # 125 
+000B 2096FD         JB     echo2,?WHILE9
+                                           ; SOURCE LINE # 126 
+000E 858C83         MOV    DPH,TH0
+                                           ; SOURCE LINE # 127 
+0011 858A82         MOV    DPL,TL0
+                                           ; SOURCE LINE # 128 
+0014 758AFF         MOV    TL0,#0FFH
+0017 758CFF         MOV    TH0,#0FFH
+              ; R2 is assigned to get
+                                           ; SOURCE LINE # 129 
+001A E583           MOV    A,DPTR+01H
+001C B47505         CJNE   A,#075H,?LAB25
+001F E582           MOV    A,DPTR
+0021 B43000         CJNE   A,#030H,?LAB25
+0024         ?LAB25:
+0024 500F           JNC    ?ELSE3
+                                           ; SOURCE LINE # 130 
+0026 AE83           MOV    R6,DPTR+01H
+0028 AF82           MOV    R7,DPTR
+002A E4             CLR    A
+002B FC             MOV    R4,A
+002C 7D3B           MOV    R5,#03BH
+002E 120000  R      LCALL  ?C_UIDIV
+0031 8F02           MOV    AR2,R7
+0033 8002           SJMP   ?NXT17
+0035         ?ELSE3:
+                                           ; SOURCE LINE # 132 
+0035 E4             CLR    A
+0036 FA             MOV    R2,A
+0037         ?NXT17:
+                                           ; SOURCE LINE # 133 
+0037 8A07           MOV    AR7,R2
+                                           ; SOURCE LINE # 134 
+0039 22             RET    
+
+            ; FUNCTION ultrasonic2 (END)
+
+            ; FUNCTION delay (BEGIN)
+              ; R4R5 is assigned to i
+              ; R6R7 is assigned to j
+                                           ; SOURCE LINE # 137 
+0000 E4             CLR    A
+0001 FC             MOV    R4,A
+0002 FD             MOV    R5,A
+0003         ?FOR4:
+                                           ; SOURCE LINE # 138 
+0003 7BE8           MOV    R3,#0E8H
+0005 7A04           MOV    R2,#004H
+0007         ?NXT25:
+0007 DBFE           DJNZ   R3,?NXT25
+0009 DAFC           DJNZ   R2,?NXT25
+000B 7E03           MOV    R6,#003H
+000D 7FE8           MOV    R7,#0E8H
+                                           ; SOURCE LINE # 137 
+000F 0D             INC    R5
+0010 ED             MOV    A,R5
+0011 7001           JNZ    ?LAB32
+0013 0C             INC    R4
+0014         ?LAB32:
+0014 BC03EC         CJNE   R4,#003H,?FOR4
+0017 BDE8E9         CJNE   R5,#0E8H,?FOR4
+                                           ; SOURCE LINE # 140 
+001A 22             RET    
+
+            ; FUNCTION delay (END)
+
+            ; FUNCTION delayfew (BEGIN)
+              ; R4R5 is assigned to i
+              ; R6R7 is assigned to j
+                                           ; SOURCE LINE # 144 
+0000 E4             CLR    A
+0001 FC             MOV    R4,A
+0002 FD             MOV    R5,A
+0003         ?FOR8:
+                                           ; SOURCE LINE # 145 
+0003 7BE8           MOV    R3,#0E8H
+0005 7A04           MOV    R2,#004H
+0007         ?NXT33:
+0007 DBFE           DJNZ   R3,?NXT33
+0009 DAFC           DJNZ   R2,?NXT33
+000B 7E03           MOV    R6,#003H
+000D 7FE8           MOV    R7,#0E8H
+                                           ; SOURCE LINE # 144 
+000F 0D             INC    R5
+0010 ED             MOV    A,R5
+0011 7001           JNZ    ?LAB38
+0013 0C             INC    R4
+0014         ?LAB38:
+0014 BC01EC         CJNE   R4,#001H,?FOR8
+0017 BDF4E9         CJNE   R5,#0F4H,?FOR8
+                                           ; SOURCE LINE # 147 
+001A 22             RET    
+
+            ; FUNCTION delayfew (END)
+
+            ; FUNCTION main (BEGIN)
+                                           ; SOURCE LINE # 152 
+0000 758909         MOV    TMOD,#009H
+                                           ; SOURCE LINE # 153 
+0003 758A00         MOV    TL0,#000H
+0006 758C00         MOV    TH0,#000H
+                                           ; SOURCE LINE # 154 
+0009 D28C           SETB   TR0
+                                           ; SOURCE LINE # 155 
+000B 120000  R      LCALL  lcd_init
+                                           ; SOURCE LINE # 156 
+000E D2B2           SETB   P3.2
+0010         ?WHILE11:
+                                           ; SOURCE LINE # 158 
+0010 E500    R      MOV    A,count
+0012 4500    R      ORL    A,count+01H
+0014 700E           JNZ    ?NXT42
+                                           ; SOURCE LINE # 159 
+0016 7F80           MOV    R7,#080H
+0018 120000  R      LCALL  _cmd
+                                           ; SOURCE LINE # 160 
+001B 7B05           MOV    R3,#005H
+001D 7A00    R      MOV    R2,#HIGH(?STR?MINIPROJECT?BASE)
+001F 7900    R      MOV    R1,#LOW(?STR?MINIPROJECT?BASE)
+0021 120000  R      LCALL  _show
+0024         ?NXT42:
+                                           ; SOURCE LINE # 163 
+0024 20974A         JB     IR,?NXT43
+0027 E500    R      MOV    A,count
+0029 4500    R      ORL    A,count+01H
+002B 7044           JNZ    ?NXT43
+                                           ; SOURCE LINE # 164 
+002D 7F01           MOV    R7,#001H
+002F 120000  R      LCALL  _cmd
+                                           ; SOURCE LINE # 165 
+0032 7F80           MOV    R7,#080H
+0034 120000  R      LCALL  _cmd
+                                           ; SOURCE LINE # 166 
+0037 7B05           MOV    R3,#005H
+0039 7A00    R      MOV    R2,#HIGH(?STR?MINIPROJECT?BASE + 010H)
+003B 7900    R      MOV    R1,#LOW(?STR?MINIPROJECT?BASE + 010H)
+003D 120000  R      LCALL  _show
+                                           ; SOURCE LINE # 167 
+0040 120000  R      LCALL  delay
+                                           ; SOURCE LINE # 168 
+0043 7F01           MOV    R7,#001H
+0045 120000  R      LCALL  _cmd
+                                           ; SOURCE LINE # 169 
+0048 7F80           MOV    R7,#080H
+004A 120000  R      LCALL  _cmd
+                                           ; SOURCE LINE # 170 
+004D 7B05           MOV    R3,#005H
+004F 7A00    R      MOV    R2,#HIGH(?STR?MINIPROJECT?BASE + 01FH)
+0051 7900    R      MOV    R1,#LOW(?STR?MINIPROJECT?BASE + 01FH)
+0053 120000  R      LCALL  _show
+                                           ; SOURCE LINE # 171 
+0056 7FC0           MOV    R7,#0C0H
+0058 120000  R      LCALL  _cmd
+                                           ; SOURCE LINE # 172 
+005B 7B05           MOV    R3,#005H
+005D 7A00    R      MOV    R2,#HIGH(?STR?MINIPROJECT?BASE + 02EH)
+005F 7900    R      MOV    R1,#LOW(?STR?MINIPROJECT?BASE + 02EH)
+0061 120000  R      LCALL  _show
+                                           ; SOURCE LINE # 173 
+0064 E4             CLR    A
+0065 F500    R      MOV    count,A
+0067 750001  R      MOV    count+01H,#001H
+                                           ; SOURCE LINE # 174 
+006A 7E07           MOV    R6,#007H
+006C 7FD0           MOV    R7,#0D0H
+006E 120000  R      LCALL  delay
+0071         ?NXT43:
+                                           ; SOURCE LINE # 177 
+0071 120000  R      LCALL  ultrasonic1
+0074 750000  R      MOV    range1,#000H
+0077 8F00    R      MOV    range1+01H,R7
+                                           ; SOURCE LINE # 178 
+0079 120000  R      LCALL  ultrasonic2
+007C 750000  R      MOV    range2,#000H
+007F 8F00    R      MOV    range2+01H,R7
+                                           ; SOURCE LINE # 179 
+0081 E500    R      MOV    A,range2+01H
+0083 2500    R      ADD    A,range1+01H
+0085 FB             MOV    R3,A
+0086 E500    R      MOV    A,range2
+0088 3500    R      ADDC   A,range1
+008A FA             MOV    R2,A
+008B E500    R      MOV    A,widthofgate+01H
+008D C3             CLR    C
+008E 9B             SUBB   A,R3
+008F FB             MOV    R3,A
+0090 E500    R      MOV    A,widthofgate
+0092 9A             SUBB   A,R2
+0093 F500    R      MOV    widthofvehicle,A
+0095 8B00    R      MOV    widthofvehicle+01H,R3
+                                           ; SOURCE LINE # 180 
+0097 7FC0           MOV    R7,#0C0H
+0099 120000  R      LCALL  _cmd
+                                           ; SOURCE LINE # 181 
+009C AE00    R      MOV    R6,widthofvehicle
+009E AF00    R      MOV    R7,widthofvehicle+01H
+00A0 E4             CLR    A
+00A1 FC             MOV    R4,A
+00A2 7D64           MOV    R5,#064H
+00A4 120000  R      LCALL  ?C_SIDIV
+00A7 EF             MOV    A,R7
+00A8 2430           ADD    A,#030H
+00AA FF             MOV    R7,A
+00AB 120000  R      LCALL  _dat
+                                           ; SOURCE LINE # 182 
+00AE AE00    R      MOV    R6,widthofvehicle
+00B0 AF00    R      MOV    R7,widthofvehicle+01H
+00B2 E4             CLR    A
+00B3 FC             MOV    R4,A
+00B4 7D0A           MOV    R5,#00AH
+00B6 120000  R      LCALL  ?C_SIDIV
+00B9 E4             CLR    A
+00BA FC             MOV    R4,A
+00BB 7D0A           MOV    R5,#00AH
+00BD 120000  R      LCALL  ?C_SIDIV
+00C0 ED             MOV    A,R5
+00C1 2430           ADD    A,#030H
+00C3 FF             MOV    R7,A
+00C4 120000  R      LCALL  _dat
+                                           ; SOURCE LINE # 183 
+00C7 AE00    R      MOV    R6,widthofvehicle
+00C9 AF00    R      MOV    R7,widthofvehicle+01H
+00CB E4             CLR    A
+00CC FC             MOV    R4,A
+00CD 7D0A           MOV    R5,#00AH
+00CF 120000  R      LCALL  ?C_SIDIV
+00D2 ED             MOV    A,R5
+00D3 2430           ADD    A,#030H
+00D5 FF             MOV    R7,A
+00D6 120000  R      LCALL  _dat
+                                           ; SOURCE LINE # 185 
+00D9 E500    R      MOV    A,count+01H
+00DB 6401           XRL    A,#001H
+00DD 4500    R      ORL    A,count
+00DF 6003           JZ     $ + 5
+00E1 020000  R      LJMP   ?ELSE12
+00E4 E500    R      MOV    A,vacancies
+00E6 6480           XRL    A,#080H
+00E8 B48006         CJNE   A,#080H,?LAB62
+00EB E500    R      MOV    A,vacancies+01H
+00ED B40001         CJNE   A,#000H,?LAB62
+00F0 D3             SETB   C
+00F1         ?LAB62:
+00F1 5003           JNC    $ + 5
+00F3 020000  R      LJMP   ?ELSE12
+                                           ; SOURCE LINE # 186 
+00F6 7F01           MOV    R7,#001H
+00F8 120000  R      LCALL  _cmd
+                                           ; SOURCE LINE # 187 
+00FB 7F80           MOV    R7,#080H
+00FD 120000  R      LCALL  _cmd
+                                           ; SOURCE LINE # 188 
+0100 7B05           MOV    R3,#005H
+0102 7A00    R      MOV    R2,#HIGH(?STR?MINIPROJECT?BASE + 03DH)
+0104 7900    R      MOV    R1,#LOW(?STR?MINIPROJECT?BASE + 03DH)
+0106 120000  R      LCALL  _show
+                                           ; SOURCE LINE # 189 
+0109 7FC0           MOV    R7,#0C0H
+010B 120000  R      LCALL  _cmd
+                                           ; SOURCE LINE # 190 
+010E 7B05           MOV    R3,#005H
+0110 7A00    R      MOV    R2,#HIGH(?STR?MINIPROJECT?BASE + 04FH)
+0112 7900    R      MOV    R1,#LOW(?STR?MINIPROJECT?BASE + 04FH)
+0114 120000  R      LCALL  _show
+                                           ; SOURCE LINE # 191 
+0117 120000  R      LCALL  delayfew
+                                           ; SOURCE LINE # 193 
+011A E500    R      MOV    A,widthofvehicle
+011C 6480           XRL    A,#080H
+011E B48105         CJNE   A,#081H,?LAB65
+0121 E500    R      MOV    A,widthofvehicle+01H
+0123 B42C00         CJNE   A,#02CH,?LAB65
+0126         ?LAB65:
+0126 4003           JC     $ + 5
+0128 020000  R      LJMP   ?NXT44
+012B E500    R      MOV    A,widthofvehicle
+012D 6480           XRL    A,#080H
+012F B48006         CJNE   A,#080H,?LAB67
+0132 E500    R      MOV    A,widthofvehicle+01H
+0134 B46401         CJNE   A,#064H,?LAB67
+0137 D3             SETB   C
+0138         ?LAB67:
+0138 5003           JNC    $ + 5
+013A 020000  R      LJMP   ?NXT44
+                                           ; SOURCE LINE # 194 
+013D E500    R      MOV    A,vacancies+01H
+013F 24FF           ADD    A,#0FFH
+0141 FB             MOV    R3,A
+0142 E500    R      MOV    A,vacancies
+0144 34FF           ADDC   A,#0FFH
+0146 F500    R      MOV    vacancies,A
+0148 8B00    R      MOV    vacancies+01H,R3
+                                           ; SOURCE LINE # 195 
+014A 7F01           MOV    R7,#001H
+014C 120000  R      LCALL  _cmd
+                                           ; SOURCE LINE # 196 
+014F 7F80           MOV    R7,#080H
+0151 120000  R      LCALL  _cmd
+                                           ; SOURCE LINE # 197 
+0154 7B05           MOV    R3,#005H
+0156 7A00    R      MOV    R2,#HIGH(?STR?MINIPROJECT?BASE + 05EH)
+0158 7900    R      MOV    R1,#LOW(?STR?MINIPROJECT?BASE + 05EH)
+015A 120000  R      LCALL  _show
+                                           ; SOURCE LINE # 198 
+015D 7FC0           MOV    R7,#0C0H
+015F 120000  R      LCALL  _cmd
+                                           ; SOURCE LINE # 199 
+0162 7B05           MOV    R3,#005H
+0164 7A00    R      MOV    R2,#HIGH(?STR?MINIPROJECT?BASE + 06EH)
+0166 7900    R      MOV    R1,#LOW(?STR?MINIPROJECT?BASE + 06EH)
+0168 120000  R      LCALL  _show
+                                           ; SOURCE LINE # 200 
+016B 7FC7           MOV    R7,#0C7H
+016D 120000  R      LCALL  _cmd
+                                           ; SOURCE LINE # 201 
+0170 AE00    R      MOV    R6,widthofvehicle
+0172 AF00    R      MOV    R7,widthofvehicle+01H
+0174 E4             CLR    A
+0175 FC             MOV    R4,A
+0176 7D64           MOV    R5,#064H
+0178 120000  R      LCALL  ?C_SIDIV
+017B EF             MOV    A,R7
+017C 2430           ADD    A,#030H
+017E FF             MOV    R7,A
+017F 120000  R      LCALL  _dat
+                                           ; SOURCE LINE # 202 
+0182 AE00    R      MOV    R6,widthofvehicle
+0184 AF00    R      MOV    R7,widthofvehicle+01H
+0186 E4             CLR    A
+0187 FC             MOV    R4,A
+0188 7D0A           MOV    R5,#00AH
+018A 120000  R      LCALL  ?C_SIDIV
+018D E4             CLR    A
+018E FC             MOV    R4,A
+018F 7D0A           MOV    R5,#00AH
+0191 120000  R      LCALL  ?C_SIDIV
+0194 ED             MOV    A,R5
+0195 2430           ADD    A,#030H
+0197 FF             MOV    R7,A
+0198 120000  R      LCALL  _dat
+                                           ; SOURCE LINE # 203 
+019B AE00    R      MOV    R6,widthofvehicle
+019D AF00    R      MOV    R7,widthofvehicle+01H
+019F E4             CLR    A
+01A0 FC             MOV    R4,A
+01A1 7D0A           MOV    R5,#00AH
+01A3 120000  R      LCALL  ?C_SIDIV
+01A6 ED             MOV    A,R5
+01A7 2430           ADD    A,#030H
+01A9 FF             MOV    R7,A
+01AA 120000  R      LCALL  _dat
+                                           ; SOURCE LINE # 204 
+01AD 120000  R      LCALL  delay
+                                           ; SOURCE LINE # 206 
+01B0 7F01           MOV    R7,#001H
+01B2 120000  R      LCALL  _cmd
+                                           ; SOURCE LINE # 207 
+01B5 7F80           MOV    R7,#080H
+01B7 120000  R      LCALL  _cmd
+                                           ; SOURCE LINE # 208 
+01BA 7B05           MOV    R3,#005H
+01BC 7A00    R      MOV    R2,#HIGH(?STR?MINIPROJECT?BASE + 076H)
+01BE 7900    R      MOV    R1,#LOW(?STR?MINIPROJECT?BASE + 076H)
+01C0 120000  R      LCALL  _show
+                                           ; SOURCE LINE # 209 
+01C3 7F8D           MOV    R7,#08DH
+01C5 120000  R      LCALL  _cmd
+                                           ; SOURCE LINE # 210 
+01C8 E500    R      MOV    A,vacancies+01H
+01CA 2430           ADD    A,#030H
+01CC FF             MOV    R7,A
+01CD 120000  R      LCALL  _dat
+                                           ; SOURCE LINE # 211 
+01D0 120000  R      LCALL  delay
+                                           ; SOURCE LINE # 212 
+01D3 E4             CLR    A
+01D4 F500    R      MOV    count,A
+01D6 F500    R      MOV    count+01H,A
+                                           ; SOURCE LINE # 213 
+01D8 7F01           MOV    R7,#001H
+01DA 120000  R      LCALL  _cmd
+01DD 020000  R      LJMP   ?WHILE11
+01E0         ?ELSE12:
+                                           ; SOURCE LINE # 217 
+01E0 E500    R      MOV    A,count
+01E2 4500    R      ORL    A,count+01H
+01E4 6003           JZ     $ + 5
+01E6 020000  R      LJMP   ?ELSE14
+01E9 E500    R      MOV    A,widthofvehicle
+01EB 6480           XRL    A,#080H
+01ED B48105         CJNE   A,#081H,?LAB72
+01F0 E500    R      MOV    A,widthofvehicle+01H
+01F2 B42C00         CJNE   A,#02CH,?LAB72
+01F5         ?LAB72:
+01F5 5078           JNC    ?ELSE14
+01F7 E500    R      MOV    A,widthofvehicle
+01F9 6480           XRL    A,#080H
+01FB B48006         CJNE   A,#080H,?LAB74
+01FE E500    R      MOV    A,widthofvehicle+01H
+0200 B46401         CJNE   A,#064H,?LAB74
+0203 D3             SETB   C
+0204         ?LAB74:
+0204 4069           JC     ?ELSE14
+0206 E500    R      MOV    A,vacancies
+0208 6480           XRL    A,#080H
+020A B48005         CJNE   A,#080H,?LAB76
+020D E500    R      MOV    A,vacancies+01H
+020F B40200         CJNE   A,#002H,?LAB76
+0212         ?LAB76:
+0212 505B           JNC    ?ELSE14
+                                           ; SOURCE LINE # 218 
+0214 E500    R      MOV    A,vacancies+01H
+0216 2401           ADD    A,#001H
+0218 FB             MOV    R3,A
+0219 E4             CLR    A
+021A 3500    R      ADDC   A,vacancies
+021C F500    R      MOV    vacancies,A
+021E 8B00    R      MOV    vacancies+01H,R3
+                                           ; SOURCE LINE # 219 
+0220 7F01           MOV    R7,#001H
+0222 120000  R      LCALL  _cmd
+                                           ; SOURCE LINE # 220 
+0225 7F80           MOV    R7,#080H
+0227 120000  R      LCALL  _cmd
+                                           ; SOURCE LINE # 221 
+022A 7B05           MOV    R3,#005H
+022C 7A00    R      MOV    R2,#HIGH(?STR?MINIPROJECT?BASE + 083H)
+022E 7900    R      MOV    R1,#LOW(?STR?MINIPROJECT?BASE + 083H)
+0230 120000  R      LCALL  _show
+                                           ; SOURCE LINE # 222 
+0233 7FC0           MOV    R7,#0C0H
+0235 120000  R      LCALL  _cmd
+                                           ; SOURCE LINE # 223 
+0238 7B05           MOV    R3,#005H
+023A 7A00    R      MOV    R2,#HIGH(?STR?MINIPROJECT?BASE + 093H)
+023C 7900    R      MOV    R1,#LOW(?STR?MINIPROJECT?BASE + 093H)
+023E 120000  R      LCALL  _show
+                                           ; SOURCE LINE # 224 
+0241 120000  R      LCALL  delay
+                                           ; SOURCE LINE # 225 
+0244 7F01           MOV    R7,#001H
+0246 120000  R      LCALL  _cmd
+                                           ; SOURCE LINE # 226 
+0249 7F80           MOV    R7,#080H
+024B 120000  R      LCALL  _cmd
+                                           ; SOURCE LINE # 227 
+024E 7B05           MOV    R3,#005H
+0250 7A00    R      MOV    R2,#HIGH(?STR?MINIPROJECT?BASE + 076H)
+0252 7900    R      MOV    R1,#LOW(?STR?MINIPROJECT?BASE + 076H)
+0254 120000  R      LCALL  _show
+                                           ; SOURCE LINE # 228 
+0257 7F8D           MOV    R7,#08DH
+0259 120000  R      LCALL  _cmd
+                                           ; SOURCE LINE # 229 
+025C E500    R      MOV    A,vacancies+01H
+025E 2430           ADD    A,#030H
+0260 FF             MOV    R7,A
+0261 120000  R      LCALL  _dat
+                                           ; SOURCE LINE # 230 
+0264 120000  R      LCALL  delay
+                                           ; SOURCE LINE # 231 
+0267 7F01           MOV    R7,#001H
+0269 120000  R      LCALL  _cmd
+026C 020000  R      LJMP   ?WHILE11
+026F         ?ELSE14:
+                                           ; SOURCE LINE # 234 
+026F E500    R      MOV    A,count+01H
+0271 6401           XRL    A,#001H
+0273 4500    R      ORL    A,count
+0275 6003           JZ     $ + 5
+0277 020000  R      LJMP   ?WHILE11
+027A E500    R      MOV    A,vacancies
+027C 4500    R      ORL    A,vacancies+01H
+027E 6003           JZ     $ + 5
+0280 020000  R      LJMP   ?WHILE11
+                                           ; SOURCE LINE # 235 
+0283 7F01           MOV    R7,#001H
+0285 120000  R      LCALL  _cmd
+                                           ; SOURCE LINE # 236 
+0288 7F80           MOV    R7,#080H
+028A 120000  R      LCALL  _cmd
+                                           ; SOURCE LINE # 237 
+028D 7B05           MOV    R3,#005H
+028F 7A00    R      MOV    R2,#HIGH(?STR?MINIPROJECT?BASE + 099H)
+0291 7900    R      MOV    R1,#LOW(?STR?MINIPROJECT?BASE + 099H)
+0293 120000  R      LCALL  _show
+                                           ; SOURCE LINE # 238 
+0296 7FC0           MOV    R7,#0C0H
+0298 120000  R      LCALL  _cmd
+                                           ; SOURCE LINE # 239 
+029B 7B05           MOV    R3,#005H
+029D 7A00    R      MOV    R2,#HIGH(?STR?MINIPROJECT?BASE + 0A8H)
+029F 7900    R      MOV    R1,#LOW(?STR?MINIPROJECT?BASE + 0A8H)
+02A1 120000  R      LCALL  _show
+                                           ; SOURCE LINE # 240 
+02A4 E4             CLR    A
+02A5 F500    R      MOV    count,A
+02A7 F500    R      MOV    count+01H,A
+                                           ; SOURCE LINE # 241 
+02A9 120000  R      LCALL  delay
+                                           ; SOURCE LINE # 242 
+02AC 7F01           MOV    R7,#001H
+02AE 120000  R      LCALL  _cmd
+02B1         ?NXT44:
+02B1 020000  R      LJMP   ?WHILE11
+
+            ; FUNCTION main (END)
+
+RC51 COMPILER V03.03.37,  MINIPROJECT             05/10/23  22:39:01  PAGE  3
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+range1 . . . . . . . . . . . . . . . .  PUBLIC  DATA    U_INT  0000H   2    
+range2 . . . . . . . . . . . . . . . .  PUBLIC  DATA    U_INT  0002H   2    
+widthofgate. . . . . . . . . . . . . .  PUBLIC  DATA    INT     0004H   2    
+widthofvehicle . . . . . . . . . . . .  PUBLIC  DATA    INT     0006H   2    
+vacancies. . . . . . . . . . . . . . .  PUBLIC  DATA    INT     0008H   2    
+count. . . . . . . . . . . . . . . . .  PUBLIC  DATA    INT     000AH   2    
+lcd_init . . . . . . . . . . . . . . .  PUBLIC  CODE    PROC    -----   -----
+cmd. . . . . . . . . . . . . . . . . .  PUBLIC  CODE    PROC    -----   -----
+  a?177. . . . . . . . . . . . . . . .  PARAM   DATA    U_CHAR  0000H   1    
+  a?177. . . . . . . . . . . . . . . .  PARAM   DATA    U_CHAR  0000H   1    
+dat. . . . . . . . . . . . . . . . . .  PUBLIC  CODE    PROC    -----   -----
+  b?178. . . . . . . . . . . . . . . .  PARAM   DATA    U_CHAR  0000H   1    
+  b?178. . . . . . . . . . . . . . . .  PARAM   DATA    U_CHAR  0000H   1    
+show . . . . . . . . . . . . . . . . .  PUBLIC  CODE    PROC    -----   -----
+  s?179. . . . . . . . . . . . . . . .  PARAM   DATA    PTR     0000H   3    
+  s?179. . . . . . . . . . . . . . . .  PARAM   DATA    PTR     0000H   3    
+lcd_delay. . . . . . . . . . . . . . .  PUBLIC  CODE    PROC    -----   -----
+i?180. . . . . . . . . . . . . . . . .  AUTO    DATA    U_INT  0000H   2    
+send_pulse1. . . . . . . . . . . . . .  PUBLIC  CODE    PROC    -----   -----
+send_pulse2. . . . . . . . . . . . . .  PUBLIC  CODE    PROC    -----   -----
+ultrasonic1. . . . . . . . . . . . . .  PUBLIC  CODE    PROC    -----   -----
+get?185. . . . . . . . . . . . . . . .  AUTO    DATA    U_CHAR  0000H   1    
+ultrasonic2. . . . . . . . . . . . . .  PUBLIC  CODE    PROC    -----   -----
+get?186. . . . . . . . . . . . . . . .  AUTO    DATA    U_CHAR  0000H   1    
+delay. . . . . . . . . . . . . . . . .  PUBLIC  CODE    PROC    -----   -----
+i?187. . . . . . . . . . . . . . . . .  AUTO    DATA    U_INT  0000H   2    
+j?188. . . . . . . . . . . . . . . . .  AUTO    DATA    U_INT  0000H   2    
+delayfew . . . . . . . . . . . . . . .  PUBLIC  CODE    PROC    -----   -----
+i?189. . . . . . . . . . . . . . . . .  AUTO    DATA    U_INT  0000H   2    
+j?190. . . . . . . . . . . . . . . . .  AUTO    DATA    U_INT  0000H   2    
+main . . . . . . . . . . . . . . . . .  PUBLIC  CODE    PROC    -----   -----
+RC51 COMPILER V03.03.37,  MINIPROJECT             05/10/23  22:39:01  PAGE  4
+
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   1002    ----
+   CONSTANT SIZE    =    176    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     12      12
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+RC51 COMPILATION COMPLETE.  1 WARNING,  0 ERROR

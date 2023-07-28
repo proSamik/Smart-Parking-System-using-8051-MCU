@@ -1,0 +1,6 @@
+[51 Driver options]
+Link_UseMonitor=0
+Link_WriteableCode=1
+Link_OldMonitor=0
+Link_Baudrate=115
+Link_BreakSeq=Ext UART

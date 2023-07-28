@@ -1,0 +1,38 @@
+WIN32 LX51 CODE BANKING LINKER/LOCATOR V05.01.24
+
+
+INTER-MODULE CROSS-REFERENCE LISTING
+------------------------------------
+
+          NAME. . . . . . . . USAGE   MODULE NAMES
+          ----------------------------------------
+          ?C_INITSEGSTART . . CODE    [_C_INITD]:  C1S
+          ?C_SIDIV  . . . . . CODE    [DIVS]:  MINIPROJECT
+          ?C_START1 . . . . . CODE    [C1S]:  MINIPROJECT
+          ?C_UIDIV  . . . . . CODE    [DIVS]:  MINIPROJECT
+          count . . . . . . . DATA    [MINIPROJECT]: 
+          CPL_R4R5  . . . . . CODE    [DIVS]: 
+          CPL_R6R7  . . . . . CODE    [DIVS]: 
+          delay . . . . . . . CODE    [MINIPROJECT]: 
+          delayfew  . . . . . CODE    [MINIPROJECT]: 
+          DIV_2 . . . . . . . CODE    [DIVS]: 
+          HPD_ADDR  . . . . . DATA    [HPD]:  C1S
+          IDATALEN  . . . . . NUMBER  [_C_IDATALEN]:  C1S
+          IPGN1?C . . . . . . CODE    [IPGN1]:  MINIPROJECT
+          lcd_delay . . . . . CODE    [MINIPROJECT]:  MINIPROJECT
+          lcd_init  . . . . . CODE    [MINIPROJECT]: 
+          main  . . . . . . . CODE    [MINIPROJECT]:  C1S
+          range1  . . . . . . DATA    [MINIPROJECT]: 
+          range2  . . . . . . DATA    [MINIPROJECT]: 
+          send_pulse1 . . . . CODE    [MINIPROJECT]: 
+          send_pulse2 . . . . CODE    [MINIPROJECT]: 
+          ultrasonic1 . . . . CODE    [MINIPROJECT]: 
+          ultrasonic2 . . . . CODE    [MINIPROJECT]: 
+          vacancies . . . . . DATA    [MINIPROJECT]: 
+          widthofgate . . . . DATA    [MINIPROJECT]: 
+          widthofvehicle  . . DATA    [MINIPROJECT]: 
+          _cmd  . . . . . . . CODE    [MINIPROJECT]:  MINIPROJECT
+          _dat  . . . . . . . CODE    [MINIPROJECT]: 
+          _INITP2?  . . . . . NUMBER  [_C_IDATALEN]:  C1S
+          _show . . . . . . . CODE    [MINIPROJECT]: 
+          _STACK  . . . . . . IDATA   [MINIPROJECT]:  C1S
