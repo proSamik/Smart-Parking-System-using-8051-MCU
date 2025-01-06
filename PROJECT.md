@@ -2,9 +2,7 @@
 
 A smart and efficient parking management system built using 8051 microcontroller to automate parking space allocation and management. The system helps drivers find available parking spots quickly, reducing time wastage and traffic congestion.
 
-Working video
-
-https://youtu.be/cn8MsmLzOQQ
+Working video- https://youtu.be/cn8MsmLzOQQ
 
 ## Technical Implementation
 
